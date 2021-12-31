@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.8.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="之前学习了TestNG和GoCD的知识，并且已经利用Appium和Java写了简单的基于page object的mobile测试用例。现在将它们联合起来，搭建一个可使用的自动化测试框架。使用到的工具或者框架如下：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TestNG+Appium+GoCD自动化测试框架搭建">
+<meta property="og:url" content="http://example.com/2020/06/01/TestNG-Appium-GoCD%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E6%A1%86%E6%9E%B6%E6%90%AD%E5%BB%BA/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="之前学习了TestNG和GoCD的知识，并且已经利用Appium和Java写了简单的基于page object的mobile测试用例。现在将它们联合起来，搭建一个可使用的自动化测试框架。使用到的工具或者框架如下：">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-06-01T09:19:58.000Z">
+<meta property="article:modified_time" content="2021-12-15T06:34:23.267Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2020/06/01/TestNG-Appium-GoCD%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E6%A1%86%E6%9E%B6%E6%90%AD%E5%BB%BA/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2020/06/01/TestNG-Appium-GoCD%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E6%A1%86%E6%9E%B6%E6%90%AD%E5%BB%BA/","path":"2020/06/01/TestNG-Appium-GoCD自动化测试框架搭建/","title":"TestNG+Appium+GoCD自动化测试框架搭建"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>TestNG+Appium+GoCD自动化测试框架搭建 | Hexo</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80-%E4%BD%BF%E7%94%A8Maven%E6%9D%A5%E7%AE%A1%E7%90%86%E9%A1%B9%E7%9B%AE"><span class="nav-number">1.</span> <span class="nav-text">一 使用Maven来管理项目</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C-%E6%B7%BB%E5%8A%A0%E7%9B%B8%E5%85%B3%E4%BE%9D%E8%B5%96%E5%92%8C%E6%8F%92%E4%BB%B6"><span class="nav-number">2.</span> <span class="nav-text">二 添加相关依赖和插件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89-%E6%B7%BB%E5%8A%A0xml%E6%96%87%E4%BB%B6"><span class="nav-number">3.</span> <span class="nav-text">三 添加xml文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B-push%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81%E5%88%B0GitHub%E4%BB%93%E5%BA%93"><span class="nav-number">4.</span> <span class="nav-text">四 push测试代码到GitHub仓库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%94-%E5%AE%9E%E7%8E%B0%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90%E5%92%8C%E9%83%A8%E7%BD%B2"><span class="nav-number">5.</span> <span class="nav-text">五 实现持续集成和部署</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AD-%E8%AE%BE%E7%BD%AEPipeline"><span class="nav-number">6.</span> <span class="nav-text">六 设置Pipeline</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/06/01/TestNG-Appium-GoCD%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E6%A1%86%E6%9E%B6%E6%90%AD%E5%BB%BA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          TestNG+Appium+GoCD自动化测试框架搭建
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-06-01 17:19:58" itemprop="dateCreated datePublished" datetime="2020-06-01T17:19:58+08:00">2020-06-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2021-12-15 14:34:23" itemprop="dateModified" datetime="2021-12-15T14:34:23+08:00">2021-12-15</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>之前学习了TestNG和GoCD的知识，并且已经利用Appium和Java写了简单的基于page object的mobile测试用例。现在将它们联合起来，搭建一个可使用的自动化测试框架。使用到的工具或者框架如下：</p>
+<span id="more"></span>
+<p>1.Java - 编码语言<br>2.Appium - mobile测试工具<br>3.TestNG - 单元测试框架<br>4.Maven - 项目构建和管理工具<br>5.GoCD - 持续集成和部署工具</p>
+<h3 id="一-使用Maven来管理项目"><a href="#一-使用Maven来管理项目" class="headerlink" title="一 使用Maven来管理项目"></a>一 使用Maven来管理项目</h3><p>之前在建立测试项目时，使用的是Gradle。由于最近新学习了Maven，所以将其改成Maven项目来巩固Maven的知识。新建一个Maven项目，将之前的代码拷贝进去。<br><img src ="TestNG-Appium-GoCD自动化测试框架搭建/maven管理项目.png" width=40% ></p>
+<h3 id="二-添加相关依赖和插件"><a href="#二-添加相关依赖和插件" class="headerlink" title="二 添加相关依赖和插件"></a>二 添加相关依赖和插件</h3><p>点击pom.xml文件，然后在工具栏选择code-&gt;generate-&gt;dependencies，分别添加testng依赖、appium client依赖，还有surefire插件。之所以添加这个插件是因为maven本身不执行测试，需要这个插件来执行测试。添加以后这些依赖会自动添加到pom.xml文件中，但是需要手动点击这些依赖右上方的 <code>m</code> 来真正下载这些依赖。<br><img src ="TestNG-Appium-GoCD自动化测试框架搭建/添加依赖1.png" width=50% >   </p>
+<img src ="TestNG-Appium-GoCD自动化测试框架搭建/添加依赖2.png" width=50% >
+<img src ="TestNG-Appium-GoCD自动化测试框架搭建/dependency.png" width=50% >
+<img src ="TestNG-Appium-GoCD自动化测试框架搭建/plugin.png" width=50% >
+
+<h3 id="三-添加xml文件"><a href="#三-添加xml文件" class="headerlink" title="三 添加xml文件"></a>三 添加xml文件</h3><p>由于使用TestNG时需要使用testng.xml文件来运行测试用例，而在建立项目时该文件不会自动生成，因此需要手动去创建该文件，并且添加相应的配置代码。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE suite SYSTEM &quot;http://testng.org/testng-1.0.dtd&quot;&gt;</span><br><span class="line">&lt;suite name=&quot;Default Suite&quot;&gt;</span><br><span class="line">    &lt;test name=&quot;Demo&quot;&gt;</span><br><span class="line">        &lt;classes&gt;</span><br><span class="line">            &lt;class name=&quot;org.example.demo1&quot;&gt;</span><br><span class="line">                &lt;methods&gt;</span><br><span class="line"></span><br><span class="line">                &lt;/methods&gt;</span><br><span class="line">            &lt;/class&gt;</span><br><span class="line"></span><br><span class="line">        &lt;/classes&gt;</span><br><span class="line">    &lt;/test&gt;</span><br><span class="line">&lt;/suite&gt;</span><br></pre></td></tr></table></figure>  
+
+
+<h3 id="四-push测试代码到GitHub仓库"><a href="#四-push测试代码到GitHub仓库" class="headerlink" title="四 push测试代码到GitHub仓库"></a>四 push测试代码到GitHub仓库</h3><p>在上述三个步骤做完后，测试代码可以顺利运行。在此基础之上，将本地代码push到远程的GitHub仓库。具体操作步骤，这里不再赘述。</p>
+<h3 id="五-实现持续集成和部署"><a href="#五-实现持续集成和部署" class="headerlink" title="五 实现持续集成和部署"></a>五 实现持续集成和部署</h3><p>1.打开terminal，分别进入到GoCD server和agent目录下，启动server和agent。<br>2.打开浏览器，输入<a target="_blank" rel="noopener" href="http://localhost:8153/go/pipelines#!/">http://localhost:8153/go/pipelines#!/</a> ， 进入到GoCD页面。该页面就会提醒新建一个pipeline。下面就按照提示一步步来操作。  </p>
+<ul>
+<li><strong>增加material，这里我放的是之前测试代码的仓库地址。可以点击绿色的按钮，测试连接是否成功。</strong><img src ="TestNG-Appium-GoCD自动化测试框架搭建/automationMobileTesting/CreatePipeline1.png" width=100% >  </li>
+</ul>
+ <img src ="TestNG-Appium-GoCD自动化测试框架搭建/automationMobileTesting/CreatePipeline2.png" width=100% >
+
+<ul>
+<li><p><strong>添加Pipeline</strong></p>
+<img src ="TestNG-Appium-GoCD自动化测试框架搭建/automationMobileTesting/CreatePipeline3.png" width=100% >  </li>
+<li><p><strong>添加Stage</strong></p>
+<img src ="TestNG-Appium-GoCD自动化测试框架搭建/automationMobileTesting/CreatePipeline4.png" width=100% >    </li>
+<li><p><strong>添加Job和Task</strong></p>
+<img src ="TestNG-Appium-GoCD自动化测试框架搭建/automationMobileTesting/CreatePipeline5.png" width=100% >  </li>
+<li><p><strong>生成Pipeline</strong></p>
+<img src ="TestNG-Appium-GoCD自动化测试框架搭建/automationMobileTesting/CreatePipeline6.png" width=100% >  </li>
+</ul>
+<p>经过以上步骤后就生成了一个最简单的pipeline，接下来可以根据需要来设置pipeline的参数，例如运行时间，运行命令和显示测试报告等。</p>
+<h3 id="六-设置Pipeline"><a href="#六-设置Pipeline" class="headerlink" title="六 设置Pipeline"></a>六 设置Pipeline</h3><p><strong>1.设置Pipeline的material地址。</strong>在前面我们新建Pipeline的时候添加过material，现在再次进入material设置界面确认一下是否添加正确，若没有再补上即可。其中有一项是Destination directory，它的作用是新建一个对应名字的文件夹，在pipeline运行时，将下载下来的代码存放在该文件夹下。这个路径是一个相对路径，位置为GoCD文件夹/go-agent文件夹/pipelines/Destination directory文件夹。例如我填的是AutoMobileTetsing,那么我的代码存放路径为：GOCD/go-agent-20.3.0/pipelines/AutoMobileTetsing。<br><img src = "TestNG-Appium-GoCD自动化测试框架搭建/material1.png"><br><img src = "TestNG-Appium-GoCD自动化测试框架搭建/material1.png"></p>
+<p><strong>2.添加task。</strong>一个task通常就是一条命令，这里我们加上<code>mvn test</code>这个命令来运行测试代码。在下图<strong>1</strong>处输入mvn时即会出现相关的命令，然后选择测试命令，左边<strong>2</strong>区域里就会自动填上选择的命令。最后填上Working Directory，这个路径指的是命令生效的路径，那么这里填的就是之前代码下载下来的路径。同样的，这也是一个相对路径。<br><img src = "TestNG-Appium-GoCD自动化测试框架搭建/Task.png"></p>
+<p><strong>3.添加artifacts。</strong>每个Job都可以产生artifacts，通过artifacts可以知道代码运行的情况。对于测试而言，最终是需要产生测试报告来评估测试的结果。这里通过添加artifacts来展示测试结果。</p>
+<ul>
+<li><p>设置artifacts，如下图所示，Source中填agent上surefire reports的地址，其路径为：GoCD文件夹/go-agent文件夹/pipelines/material地址/代码仓库/target/surefire-reports。Destination上填在server上surefire reports的存放地址，这个地址是在GoCD文件夹/go-agent文件夹/artifacts/pipelines/下。这两个地址的路径都属于相对路径。</p>
+<img src = "TestNG-Appium-GoCD自动化测试框架搭建/artifacts.png">  </li>
+<li><p>添加tap。为了方便的显示测试结果，可以增加一个tap，后面只要点击tap就可以看到测试结果。下图的路径就是上一步中我们填的server上report的地址</p>
+<img src = "TestNG-Appium-GoCD自动化测试框架搭建/tap.png">
+上述两个步骤做完后，就可以看到运行结果。
+<img src = "TestNG-Appium-GoCD自动化测试框架搭建/results.png">
+<img src = "TestNG-Appium-GoCD自动化测试框架搭建/results2.png"></li>
+</ul>
+<p>经过上述步骤后就搭建起来了一个简单的mobile自动化测试框架，后续在此基础再添加新的pipeline，新的设置，或者新的测试代码。在搭建过程中可能会遇到一些问题，可以通过console打印出的error找出问题所在。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/05/28/ZSH%E4%BD%BF%E7%94%A8%E5%B0%8F%E6%8A%80%E5%B7%A7/" rel="prev" title="ZSH使用小技巧">
+                  <i class="fa fa-chevron-left"></i> ZSH使用小技巧
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/06/09/Webdriver%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/" rel="next" title="Webdriver工作原理">
+                  Webdriver工作原理 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
